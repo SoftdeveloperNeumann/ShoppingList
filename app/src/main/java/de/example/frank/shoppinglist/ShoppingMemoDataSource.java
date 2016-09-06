@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Administrator on 06.09.2016.
  */
@@ -66,7 +69,19 @@ public class ShoppingMemoDataSource {
         return shoppingMemo;
     }
 
-
+    public List<ShoppingMemo> getAllShoppingMemos(){
+        List<ShoppingMemo> shoppingMemoList = new ArrayList<>();
+        Cursor c = db.query(ShoppingMemoDbHelper.TABLE_SHOPPING_LIST,columns,null,null,null,null,null);
+        c.moveToFirst();
+        ShoppingMemo memo;
+        while(!c.isAfterLast()){
+            memo = cursorToShoppingMemo(c);
+            shoppingMemoList.add(memo);
+            c.moveToNext();
+        }
+        c.close();
+        return shoppingMemoList;
+    }
 
 
 }

@@ -9,6 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -25,10 +29,17 @@ public class MainActivity extends AppCompatActivity {
         dataSource = new ShoppingMemoDataSource(this);
         Log.d(LOG_TAG,"Quelle wird geoeffnet");
         dataSource.open();
+        ShoppingMemo memo = dataSource.createShoppingMemo("BMW",5);
+        showAllListEntries();
         Log.d(LOG_TAG,"Quelle wird geschlossen");
         dataSource.close();
     }
-
+    private void showAllListEntries(){
+        List<ShoppingMemo> list = dataSource.getAllShoppingMemos();
+        ArrayAdapter<ShoppingMemo> adapter= new ArrayAdapter<ShoppingMemo>(this,android.R.layout.simple_list_item_multiple_choice,list);
+        ListView listView = (ListView)findViewById(R.id.listview_shopping_memos);
+        listView.setAdapter(adapter);
+    }
 
     @Override
 
