@@ -91,4 +91,17 @@ public class ShoppingMemoDataSource {
 
     }
 
+    public ShoppingMemo updateShoppingMemo(long id, String product, int quantity){
+        ContentValues values = new ContentValues();
+        values.put(ShoppingMemoDbHelper.COLUMN_PRODUCT,product);
+        values.put(ShoppingMemoDbHelper.COLUMN_QUANTITY, quantity);
+
+        db.update(ShoppingMemoDbHelper.TABLE_SHOPPING_LIST,values,ShoppingMemoDbHelper.COLUMN_ID + "=" + id,null);
+        Cursor cursor = db.query(ShoppingMemoDbHelper.TABLE_SHOPPING_LIST,columns,ShoppingMemoDbHelper.COLUMN_ID + "=" + id, null,null,null,null);
+        cursor.moveToFirst();
+        ShoppingMemo shoppingMemo= cursorToShoppingMemo(cursor);
+        cursor.close();
+        return shoppingMemo;
+    }
+
 }

@@ -4,12 +4,15 @@ package de.example.frank.shoppinglist;
  * Created by Administrator on 06.09.2016.
  */
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -245,5 +248,43 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
+    private AlertDialog createEditShoppingMemoDialog(final ShoppingMemo memo){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater= getLayoutInflater();
+        View dialogsView = inflater.inflate(R.layout.dialog_edit_shopping_memo,null);
+        final EditText editTextQuantity = (EditText) dialogsView.findViewById(R.id.editText_quantity);
+        editTextQuantity.setText(String.valueOf(memo.getQuantity()));
 
+        final EditText editTextProduct = (EditText) dialogsView.findViewById(R.id.editText_product);
+        editTextProduct.setText(String.valueOf(memo.getProduct()));
+
+        builder.setView(dialogsView).setTitle(R.string.dialog_title).setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener(){
+
+            /**
+             * This method will be invoked when a button in the dialog is clicked.
+             *
+             * @param dialog The dialog that received the click.
+             * @param which  The button that was clicked (e.g.
+             *               {@link DialogInterface#BUTTON1}) or the position
+             */
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String quantityString = editTextQuantity.getText().toString();
+                String product = editTextProduct.getText().toString();
+                if(TextUtils.isEmpty(quantityString)|| TextUtils.isEmpty(product)){
+                    return;
+                }
+                int quantity = Integer.parseInt(quantityString);
+                ShoppingMemo sMemo = dataSource.updateShoppingMemo(memo.getId(),product,quantity);
+                showAllListEntries();
+                dialog.dismiss();
+            }
+        }).setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+    return builder.create();
+    }
 }
