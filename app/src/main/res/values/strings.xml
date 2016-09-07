@@ -11,6 +11,9 @@
     <string name="editText_errorMessage">Das Feld darf nicht leer sein.</string>
 
     <string name="delete">Eintrag löschen</string>
+    <string name="change">Eintrag ändern</string>
+    <string name="checked">ausgewält</string>
+    <string name="dialog_title_quantity">Anzahl</string>
 
 
 </resources>
