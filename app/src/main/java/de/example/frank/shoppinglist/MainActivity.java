@@ -28,6 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private ShoppingMemoDataSource dataSource;
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ShoppingMemo testMemo = new ShoppingMemo("Golf", 5,105);
+        ShoppingMemo testMemo = new ShoppingMemo("Golf", 5, 105);
         Log.d(LOG_TAG, "Inhalt Main" + testMemo.toString());
         dataSource = new ShoppingMemoDataSource(this);
 //        Log.d(LOG_TAG,"Quelle wird geoeffnet");
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private void initializeContextualActionBar() {
         final ListView shoppingMemoListView = (ListView) findViewById(R.id.listview_shopping_memos);
         shoppingMemoListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        shoppingMemoListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener(){
+        shoppingMemoListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             int selCount = 0;
 
             /**
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                getMenuInflater().inflate(R.menu.menu_contextual_action_bar,menu);
+                getMenuInflater().inflate(R.menu.menu_contextual_action_bar, menu);
                 return true;
             }
 
@@ -77,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                 MenuItem item = menu.findItem(R.id.change);
-                if(selCount == 1){
+                if (selCount == 1) {
                     item.setVisible(true);
-                }else{
+                } else {
                     item.setVisible(false);
                 }
                 return true;
@@ -96,21 +97,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 SparseBooleanArray touchedMemoPosition = shoppingMemoListView.getCheckedItemPositions();
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.delete:
 
-                        for(int i=0;i<touchedMemoPosition.size();i++){
+                        for (int i = 0; i < touchedMemoPosition.size(); i++) {
                             boolean isCheckd = touchedMemoPosition.valueAt(i);
-                            if(isCheckd) {
+                            if (isCheckd) {
                                 int posInListView = touchedMemoPosition.keyAt(i);
                                 ShoppingMemo memo = (ShoppingMemo) shoppingMemoListView.getItemAtPosition(posInListView);
                                 dataSource.deleteShoppingMemo(memo);
                             }
                         }
-
+                        showAllListEntries();
                         break;
                     case R.id.change:
-                        for(int i=0;i<touchedMemoPosition.size();i++) {
+                        for (int i = 0; i < touchedMemoPosition.size(); i++) {
                             boolean isCheckd = touchedMemoPosition.valueAt(i);
                             if (isCheckd) {
                                 int posInListView = touchedMemoPosition.keyAt(i);
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                     default:
                         return false;
                 }
-                showAllListEntries();
+
                 mode.finish();
                 return true;
 
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                selCount=0;
+                selCount = 0;
             }
 
             /**
@@ -151,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if(checked){
+                if (checked) {
                     selCount++;
-                }else{
+                } else {
                     selCount--;
                 }
                 String capTitle = selCount + " " + getString(R.string.checked);
@@ -205,21 +206,21 @@ public class MainActivity extends AppCompatActivity {
         dataSource.open();
     }
 
-    private void activateAddButton(){
+    private void activateAddButton() {
         Button button = (Button) findViewById(R.id.button_add_product);
         final EditText editQuantity = (EditText) findViewById(R.id.editText_quantity);
         final EditText editProduct = (EditText) findViewById(R.id.editText_product);
 
-        button.setOnClickListener(new View.OnClickListener(){
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 String quantity = editQuantity.getText().toString();
                 String product = editProduct.getText().toString();
-                if(TextUtils.isEmpty(quantity)){
+                if (TextUtils.isEmpty(quantity)) {
                     editQuantity.setError(getString(R.string.editText_errorMessage));
                     return;
                 }
-                if(TextUtils.isEmpty(product)){
+                if (TextUtils.isEmpty(product)) {
                     editProduct.setError(getString(R.string.editText_errorMessage));
                     return;
                 }
@@ -228,21 +229,17 @@ public class MainActivity extends AppCompatActivity {
                 editQuantity.setText("");
                 dataSource.createShoppingMemo(product, quant);
 
-                InputMethodManager inputMethodManager;
-                inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-                if(getCurrentFocus()!= null){
-                    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
-                }
+                hideKeyboard();
                 showAllListEntries();
 //                dataSource.close();
             }
         });
     }
 
-    private void showAllListEntries(){
+    private void showAllListEntries() {
         List<ShoppingMemo> list = dataSource.getAllShoppingMemos();
-        ArrayAdapter<ShoppingMemo> adapter= new ArrayAdapter<ShoppingMemo>(this,android.R.layout.simple_list_item_multiple_choice,list);
-        ListView listView = (ListView)findViewById(R.id.listview_shopping_memos);
+        ArrayAdapter<ShoppingMemo> adapter = new ArrayAdapter<ShoppingMemo>(this, android.R.layout.simple_list_item_multiple_choice, list);
+        ListView listView = (ListView) findViewById(R.id.listview_shopping_memos);
         listView.setAdapter(adapter);
     }
 
@@ -277,17 +274,18 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
-    private AlertDialog createEditShoppingMemoDialog(final ShoppingMemo memo){
+
+    private AlertDialog createEditShoppingMemoDialog(final ShoppingMemo memo) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater= getLayoutInflater();
-        View dialogsView = inflater.inflate(R.layout.dialog_edit_shopping_memo,null);
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialogsView = inflater.inflate(R.layout.dialog_edit_shopping_memo, null);
         final EditText editTextQuantity = (EditText) dialogsView.findViewById(R.id.editText_new_quantity);
         editTextQuantity.setText(String.valueOf(memo.getQuantity()));
 
         final EditText editTextProduct = (EditText) dialogsView.findViewById(R.id.editText_new_product);
         editTextProduct.setText(String.valueOf(memo.getProduct()));
 
-        builder.setView(dialogsView).setTitle(R.string.dialog_title).setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener(){
+        builder.setView(dialogsView).setTitle(R.string.dialog_title).setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener() {
 
             /**
              * This method will be invoked when a button in the dialog is clicked.
@@ -300,13 +298,18 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String quantityString = editTextQuantity.getText().toString();
                 String product = editTextProduct.getText().toString();
-                if(TextUtils.isEmpty(quantityString)|| TextUtils.isEmpty(product)){
+                if (TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(product)) {
                     return;
                 }
+
+
                 int quantity = Integer.parseInt(quantityString);
-                ShoppingMemo sMemo = dataSource.updateShoppingMemo(memo.getId(),product,quantity);
+                ShoppingMemo sMemo = dataSource.updateShoppingMemo(memo.getId(), product, quantity);
                 showAllListEntries();
+
                 dialog.dismiss();
+                hideKeyboard();
+
             }
         }).setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
             @Override
@@ -314,6 +317,14 @@ public class MainActivity extends AppCompatActivity {
                 dialog.cancel();
             }
         });
-    return builder.create();
+        return builder.create();
+    }
+
+    private void hideKeyboard() {
+
+        InputMethodManager inputMethodManager;
+        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(inputMethodManager.HIDE_IMPLICIT_ONLY,inputMethodManager.HIDE_NOT_ALWAYS);
+
     }
 }
