@@ -42,16 +42,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         dataSource = new ShoppingMemoDataSource(this);
-//        Log.d(LOG_TAG,"Quelle wird geoeffnet");
-//        dataSource.open();
+
         intializeShoppingMemosListView();
         activateAddButton();
         initializeContextualActionBar();
-//        Log.d(LOG_TAG,"Quelle wird geschlossen");
-//        dataSource.close();
+
     }
 
     private void intializeShoppingMemosListView() {
