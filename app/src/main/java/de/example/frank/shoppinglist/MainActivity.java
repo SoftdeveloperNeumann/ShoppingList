@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ShoppingMemo memo = (ShoppingMemo) parent.getItemAtPosition(position);
-                ShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(),memo.getProduct(),memo.getQuantity(),memo.isChecked());
+                ShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(),memo.getProduct(),memo.getQuantity(),!memo.isChecked());
                 showAllListEntries();
             }
         });
