@@ -21,7 +21,8 @@ public class ShoppingMemoDataSource {
     private String[] columns= {
             ShoppingMemoDbHelper.COLUMN_ID,
             ShoppingMemoDbHelper.COLUMN_PRODUCT,
-            ShoppingMemoDbHelper.COLUMN_QUANTITY
+            ShoppingMemoDbHelper.COLUMN_QUANTITY,
+            ShoppingMemoDbHelper.COLUMN_CHECKED
     };
 
 
@@ -45,6 +46,7 @@ public class ShoppingMemoDataSource {
         ContentValues values = new ContentValues();
         values.put(ShoppingMemoDbHelper.COLUMN_PRODUCT,product);
         values.put(ShoppingMemoDbHelper.COLUMN_QUANTITY, quantity);
+        
 
         long insertId = db.insert(ShoppingMemoDbHelper.TABLE_SHOPPING_LIST, null, values);
 
@@ -56,17 +58,22 @@ public class ShoppingMemoDataSource {
         cursor.close();
         return shoppingMemo;
     }
+
+
     private ShoppingMemo cursorToShoppingMemo(Cursor cursor) {
 
         int idIndex = cursor.getColumnIndex(ShoppingMemoDbHelper.COLUMN_ID);
         int idProduct = cursor.getColumnIndex(ShoppingMemoDbHelper.COLUMN_PRODUCT);
         int idQuantity = cursor.getColumnIndex(ShoppingMemoDbHelper.COLUMN_QUANTITY);
+        int idChecked = cursor.getColumnIndex(ShoppingMemoDbHelper.COLUMN_CHECKED);
 
         String product = cursor.getString(idProduct);
         int quantity = cursor.getInt(idQuantity);
         long id = cursor.getLong(idIndex);
+        int intValueChecked = cursor.getInt(idChecked);
+        boolean isChecked = (intValueChecked != 0);
 
-        ShoppingMemo shoppingMemo = new ShoppingMemo(product, quantity, id);
+        ShoppingMemo shoppingMemo = new ShoppingMemo(product, quantity, id, isChecked);
         return shoppingMemo;
     }
 
@@ -91,10 +98,13 @@ public class ShoppingMemoDataSource {
 
     }
 
-    public ShoppingMemo updateShoppingMemo(long id, String product, int quantity){
+    public ShoppingMemo updateShoppingMemo(long id, String product, int quantity,boolean newChecked){
+
+        int intValueChecked = (newChecked)? 1 : 0;
         ContentValues values = new ContentValues();
         values.put(ShoppingMemoDbHelper.COLUMN_PRODUCT,product);
         values.put(ShoppingMemoDbHelper.COLUMN_QUANTITY, quantity);
+        values.put(ShoppingMemoDbHelper.COLUMN_CHECKED, intValueChecked);
 
         db.update(ShoppingMemoDbHelper.TABLE_SHOPPING_LIST,values,ShoppingMemoDbHelper.COLUMN_ID + "=" + id,null);
         Cursor cursor = db.query(ShoppingMemoDbHelper.TABLE_SHOPPING_LIST,columns,ShoppingMemoDbHelper.COLUMN_ID + "=" + id, null,null,null,null);

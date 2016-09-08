@@ -5,29 +5,35 @@ package de.example.frank.shoppinglist;
  */
 
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private ShoppingMemoDataSource dataSource;
+    private ListView mShoppingMemosListView;
 
     @Override
 
@@ -36,15 +42,49 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ShoppingMemo testMemo = new ShoppingMemo("Golf", 5, 105);
-        Log.d(LOG_TAG, "Inhalt Main" + testMemo.toString());
+
+
         dataSource = new ShoppingMemoDataSource(this);
 //        Log.d(LOG_TAG,"Quelle wird geoeffnet");
 //        dataSource.open();
+        intializeShoppingMemosListView();
         activateAddButton();
         initializeContextualActionBar();
 //        Log.d(LOG_TAG,"Quelle wird geschlossen");
 //        dataSource.close();
+    }
+
+    private void intializeShoppingMemosListView() {
+        List<ShoppingMemo> emptyListForInitialization = new ArrayList<>();
+        mShoppingMemosListView =(ListView) findViewById(R.id.listview_shopping_memos);
+
+        ArrayAdapter<ShoppingMemo> arrayAdapter = new ArrayAdapter<ShoppingMemo>(this,android.R.layout.simple_list_item_multiple_choice,emptyListForInitialization){
+            public View getView(int position, View convertView, ViewGroup parent){
+                View view = super.getView(position,convertView,parent);
+                TextView textView = (TextView) view;
+                ShoppingMemo memo = (ShoppingMemo) mShoppingMemosListView.getItemAtPosition(position);
+                if(memo.isChecked()){
+                    textView.setPaintFlags(textView.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                    textView.setTextColor(Color.rgb(175,175,175));
+                }else{
+                    textView.setPaintFlags(textView.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                    textView.setTextColor(Color.DKGRAY);
+                }
+                return view;
+            }
+
+        };
+        mShoppingMemosListView.setAdapter(arrayAdapter);
+        mShoppingMemosListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ShoppingMemo memo = (ShoppingMemo) parent.getItemAtPosition(position);
+                ShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(),memo.getProduct(),memo.getQuantity(),memo.isChecked());
+                showAllListEntries();
+            }
+        });
     }
 
     private void initializeContextualActionBar() {
@@ -204,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         dataSource.open();
+        showAllListEntries();
     }
 
     private void activateAddButton() {
@@ -238,9 +279,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAllListEntries() {
         List<ShoppingMemo> list = dataSource.getAllShoppingMemos();
-        ArrayAdapter<ShoppingMemo> adapter = new ArrayAdapter<ShoppingMemo>(this, android.R.layout.simple_list_item_multiple_choice, list);
-        ListView listView = (ListView) findViewById(R.id.listview_shopping_memos);
-        listView.setAdapter(adapter);
+        ArrayAdapter<ShoppingMemo> adapter = (ArrayAdapter<ShoppingMemo>) mShoppingMemosListView.getAdapter();
+        adapter.clear();
+        adapter.addAll(list);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -304,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 int quantity = Integer.parseInt(quantityString);
-                ShoppingMemo sMemo = dataSource.updateShoppingMemo(memo.getId(), product, quantity);
+                ShoppingMemo sMemo = dataSource.updateShoppingMemo(memo.getId(), product, quantity, memo.isChecked());
                 showAllListEntries();
 
                 dialog.dismiss();

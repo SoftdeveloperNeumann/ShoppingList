@@ -12,18 +12,22 @@ public class ShoppingMemoDbHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = ShoppingMemoDbHelper.class.getSimpleName();
     // Datenbank, Version und Tabelle
     public static final String DB_NAME = "shopping_list.db";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
     public static final String TABLE_SHOPPING_LIST = "shopping_list";
+
 
     // Spalten
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_PRODUCT = "product";
     public static final String COLUMN_QUANTITY = "quantity" ;
+    public static final String COLUMN_CHECKED = "checked";
 
     public static final String SQL_CREATE ="CREATE TABLE " + TABLE_SHOPPING_LIST +
             "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "+
             COLUMN_PRODUCT + " TEXT NOT NULL, "+
-            COLUMN_QUANTITY + " INTEGER NOT NULL);";
+            COLUMN_QUANTITY + " INTEGER NOT NULL," +
+            COLUMN_CHECKED + " BOOLEAN NOT NULL DEFAULT 0);";
+    public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_SHOPPING_LIST + ";";
 
     public ShoppingMemoDbHelper(Context con){
         super(con,DB_NAME,null,DB_VERSION);
@@ -48,6 +52,8 @@ public class ShoppingMemoDbHelper extends SQLiteOpenHelper {
 
     }
 
+
+
     /**
      * Called when the database needs to be upgraded. The implementation
      * should use this method to drop tables, add tables, or do anything else it
@@ -70,6 +76,7 @@ public class ShoppingMemoDbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL(SQL_DROP);
+        onCreate(db);
     }
 }
