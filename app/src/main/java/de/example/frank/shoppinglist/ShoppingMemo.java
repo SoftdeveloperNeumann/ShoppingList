@@ -8,20 +8,17 @@ public class ShoppingMemo {
     private String product;
     private int quantity;
     private long id;
-    private boolean checked;
-
-
-
+    private boolean bought;
 
     public ShoppingMemo(){
 
     }
 
-    public ShoppingMemo(String product, int quantity, long id, boolean checked) {
+    public ShoppingMemo(String product, int quantity, long id, boolean bought) {
         this.product = product;
         this.quantity = quantity;
         this.id = id;
-        this.checked = checked;
+        this.bought = bought;
     }
 
     public String getProduct() {
@@ -48,12 +45,12 @@ public class ShoppingMemo {
         this.id = id;
     }
 
-    public boolean isChecked() {
-        return checked;
+    public boolean isBought() {
+        return bought;
     }
 
-    public void setChecked(boolean checked) {
-        this.checked = checked;
+    public void setBought(boolean bought) {
+        this.bought = bought;
     }
 
     @Override

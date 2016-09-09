@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 View view = super.getView(position,convertView,parent);
                 TextView textView = (TextView) view;
                 ShoppingMemo memo = (ShoppingMemo) mShoppingMemosListView.getItemAtPosition(position);
-                if(memo.isChecked()){
+                if(memo.isBought()){
                     textView.setPaintFlags(textView.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                     textView.setTextColor(Color.rgb(175,175,175));
                 }else{
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ShoppingMemo memo = (ShoppingMemo) parent.getItemAtPosition(position);
-                ShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(),memo.getProduct(),memo.getQuantity(),!memo.isChecked());
+                ShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(),memo.getProduct(),memo.getQuantity(),!memo.isBought());
                 showAllListEntries();
             }
         });
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     selCount--;
                 }
-                String capTitle = selCount + " " + getString(R.string.checked);
+                String capTitle = selCount + " " + getString(R.string.bought);
                 mode.setTitle(capTitle);
                 mode.invalidate();
             }
@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 int quantity = Integer.parseInt(quantityString);
-                ShoppingMemo sMemo = dataSource.updateShoppingMemo(memo.getId(), product, quantity, memo.isChecked());
+                ShoppingMemo sMemo = dataSource.updateShoppingMemo(memo.getId(), product, quantity, memo.isBought());
                 showAllListEntries();
 
                 dialog.dismiss();

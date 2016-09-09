@@ -12,7 +12,7 @@
 
     <string name="delete">Eintrag löschen</string>
     <string name="change">Eintrag ändern</string>
-    <string name="checked">ausgewält</string>
+    <string name="bought">ausgewält</string>
 
     <string name="dialog_title">Listeneintrag ändern</string>
     <string name="dialog_title_quantity">Anzahl</string>
